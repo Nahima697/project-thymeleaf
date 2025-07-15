@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Product Cart</title>
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background-color: #f9f9f9;
+            padding: 2rem;
+        }
+
+        a {
+            align-self: flex-start;
+            margin-bottom: 1rem;
+            color: #007BFF;
+            text-decoration: none;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+        article {
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 1rem 2rem;
+            margin-bottom: 1.5rem;
+            width: 100%;
+            max-width: 600px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+
+        h2 {
+            margin: 0 0 0.5rem 0;
+            font-size: 1.25rem;
+            color: #333;
+        }
+
+        p {
+            margin: 0.25rem 0;
+            color: #555;
+        }
+
+        form {
+            margin-top: 1rem;
+        }
+
+        button {
+            padding: 0.5rem 1rem;
+            background-color: #28a745;
+            border: none;
+            border-radius: 4px;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #218838;
+        }
+
+        .total {
+            font-size: 1.2rem;
+            font-weight: bold;
+            margin-top: 2rem;
+        }
+
+        .error {
+            color: red;
+            margin-bottom: 1rem;
+        }
+    </style>
+</head>
+
+<body>
+<a th:href="@{/product/list}">
+    ← Retourner sur la liste
+</a>
+
+<p th:if="${errorMessage}" th:text="${errorMessage}" class="error"></p>
+
+<article th:each="item: ${productInCart}">
+    <h2>
+        <a th:href="@{/product/{id}(id=${item.productId})}">[[${item.name}]]</a>
+    </h2>
+    <p>[[${item.price}]] €</p>
+    <p>[[${item.description}]]</p>
+    <p>Quantité : [[${item.quantity}]]</p>
+
+    <form th:action="@{/product/remove-product}" method="post">
+        <input type="hidden" name="id" th:value="${item.productId}" />
+        <button type="submit">Supprimer l'article</button>
+    </form>
+</article>
+
+<p class="total">Total : [[${totalCart}]] €</p>
+
+<form th:action="@{/product/validate-cart}" method="post">
+    <button type="submit">Valider le panier</button>
+</form>
+</body>
+</html>

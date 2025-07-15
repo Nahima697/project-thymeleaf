@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Product List</title>
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            font-family: Arial, sans-serif;
+            background-color: #f9f9f9;
+        }
+
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 600px;
+            width: 100%;
+            background: white;
+            padding: 20px;
+            box-sizing: border-box;
+            box-shadow: 0 0 10px rgb(0 0 0 / 0.1);
+            border-radius: 6px;
+            display:flex;
+            flex-direction: column;
+            align-items: center;
+
+        }
+
+        a.button {
+            display: inline-block;
+            margin-bottom: 20px;
+            padding: 8px 15px;
+            background-color: #007bff;
+            color: white;
+            text-decoration: none;
+            border-radius: 4px;
+            font-weight: 600;
+            transition: background-color 0.3s ease;
+        }
+
+        a.button:hover {
+            background-color: #0056b3;
+        }
+
+        .logout {
+            padding: 8px 15px;
+            background-color: #333333;
+            color:#ffff;
+            border-color:#333333;
+            font-weight: 600;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .logout:hover {
+            background-color: darkgray;
+        }
+        article {
+            border-bottom: 1px solid #ddd;
+            padding-bottom: 15px;
+            margin-bottom: 15px;
+        }
+
+        article:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+
+        article h2 a {
+            color: #007bff;
+            text-decoration: none;
+        }
+
+        article h2 a:hover {
+            text-decoration: underline;
+        }
+
+        article p, article span {
+            margin: 5px 0;
+        }
+
+        form label {
+            display: block;
+            margin: 10px 0 5px 0;
+        }
+
+        input[type="number"] {
+            width: 60px;
+            padding: 5px;
+            font-size: 1em;
+        }
+
+        button[type="submit"] {
+            margin-top: 10px;
+            padding: 8px 15px;
+            background-color: #28a745;
+            border: none;
+            color: white;
+            font-weight: 600;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        button[type="submit"]:hover {
+            background-color: #1e7e34;
+        }
+
+        .pagination {
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        .pagination a {
+            margin: 0 5px;
+            padding: 6px 12px;
+            color: #007bff;
+            text-decoration: none;
+            border: 1px solid transparent;
+            border-radius: 4px;
+            font-weight: 600;
+            transition: background-color 0.3s ease;
+        }
+
+        .pagination a:hover {
+            background-color: #e9ecef;
+            border-color: #dee2e6;
+        }
+
+        .header {
+            display:flex;
+            justify-content:space-between;
+            gap: 20px;
+        }
+    </style>
+</head>
+
+<body>
+<div class="container">
+    <h1 th:if = "${user!=null}">Welcome [[${user.username}]]</h1>
+    <div class="header">
+        <a th:href="@{/product/cart}" class="button">Voir le panier</a>
+        <form  th:if = "${user!=null}" th:action="@{/logout}" method="post">
+            <button class="logout">Logout</button>
+        </form>
+        <form  th:if = "${user==null}" th:action="@{/login}" method="post">
+            <button >Login</button>
+        </form>
+    </div>
+    <ul th:if="${errors}">
+        <li th:each="error : ${errors}">[[${error.field}]] [[${error.defaultMessage}]]</li>
+    </ul>
+    <article th:each="item : ${productPage.content}">
+        <h2><a th:href="@{/product/{id}(id=${item.id})}">[[${item.name}]]</a></h2>
+        <p>Prix : [[${item.price}]]</p>
+        <p>[[${item.description}]]</p>
+        <span>Stock : [[${item.stock}]]</span>
+
+        <form th:action="@{/product/add-product}" method="post">
+            <label>
+                Quantité
+                <input type="number" name="quantity" value="1" min="1" th:attr="max=${item.stock}" />
+            </label>
+
+            <input type="hidden" name="id" th:value="${item.id}" />
+
+            <button type="submit">Ajouter au panier</button>
+        </form>
+    </article>
+
+    <p>Total produits : [[${productPage.totalElements}]]</p>
+
+    <div class="pagination">
+        <a th:href="@{?pageNumber={pageNumber}(pageNumber=${pageNumber-1})}" th:if="${!productPage.isFirst}">Previous</a>
+
+        <a th:href="@{?pageNumber={pageNumber}(pageNumber=${pageItem})}"
+           th:each="pageItem : ${#numbers.sequence(1, productPage.totalPages)}">[[${pageItem}]]</a>
+
+        <a th:href="@{?pageNumber={pageNumber}(pageNumber=${pageNumber+1})}" th:if="${!productPage.isLast}">Next</a>
+    </div>
+</div>
+</body>
+
+</html>
