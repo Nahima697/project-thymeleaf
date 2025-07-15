@@ -14,10 +14,7 @@ import jakarta.servlet.http.HttpSession;
 import org.springframework.stereotype.Service;
 import org.springframework.web.context.annotation.SessionScope;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -50,7 +47,14 @@ public class SessionCartService extends AbstractCartService {
 
     @Override
     public void removeProduct(ProductInCartDTO productInCartDTO) {
-        getCartMap().remove(productInCartDTO.getProductId());
+
+        ProductInCartDTO productInCartInMap = getCartMap().get(productInCartDTO.getProductId());
+        if(productInCartInMap.getQuantity() > 1) {
+            productInCartInMap.setQuantity(productInCartInMap.getQuantity() - 1);
+        }
+        else {
+            getCartMap().remove(productInCartDTO.getProductId());
+        }
     }
 
     @Override
@@ -58,15 +62,21 @@ public class SessionCartService extends AbstractCartService {
         Product product = productRepository.findById(dto.getId())
                 .orElseThrow(() -> new RuntimeException("Produit non trouvé"));
         Map<String, ProductInCartDTO> cart = getCartMap();
-        System.out.println(cart);
 
-        ProductInCart productInCart = new ProductInCart();
-        productInCart.setProduct(product);
-        productInCart.setQuantity(quantity);
+        ProductInCartDTO productInCartDTO = cart.get(product.getId());
 
-        ProductInCartDTO item = productMapper.productToCartDto(productInCart);
-        cart.put(product.getId(), item);
+        if (productInCartDTO != null) {
+            productInCartDTO.setQuantity(productInCartDTO.getQuantity() + quantity);
+        } else {
+            ProductInCart productInCart = new ProductInCart();
+            productInCart.setProduct(product);
+            productInCart.setQuantity(quantity);
+
+            ProductInCartDTO item = productMapper.productToCartDto(productInCart);
+            cart.put(product.getId(), item);
+        }
     }
+
 
     @Override
     public void validateCart(List<ProductInCartDTO> dtos) {

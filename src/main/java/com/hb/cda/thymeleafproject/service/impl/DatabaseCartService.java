@@ -17,7 +17,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
+
 
 @Service
 public class DatabaseCartService extends AbstractCartService {
@@ -46,9 +46,8 @@ public class DatabaseCartService extends AbstractCartService {
         return productInCartRepository.findByUserId(user.getId())
                 .stream()
                 .map(productMapper::productToCartDto)
-                .collect(Collectors.toList());
+                .toList();
     }
-
 
 
     @Override
@@ -73,11 +72,21 @@ public class DatabaseCartService extends AbstractCartService {
     @Override
     public void removeProduct(ProductInCartDTO productInCartDTO) {
         User user = getCurrentUser();
-        productInCartRepository.findByUserId(user.getId()).stream()
-                .filter(item -> item.getProduct().getId().equals(productInCartDTO.getProductId()))
-                .findFirst()
-                .ifPresent(productInCartRepository::delete);
+        List<ProductInCart> productInCarts = productInCartRepository.findByUserId(user.getId());
+
+        for (ProductInCart productInCart : productInCarts) {
+            if (productInCart.getProduct().getId().equals(productInCartDTO.getProductId())) {
+                if (productInCart.getQuantity() > 1) {
+                    productInCart.setQuantity(productInCart.getQuantity() - 1);
+                    productInCartRepository.save(productInCart);
+                } else {
+                    productInCartRepository.delete(productInCart);
+                }
+                break;
+            }
+        }
     }
+
 
     @Transactional
     @Override
@@ -103,5 +112,6 @@ public class DatabaseCartService extends AbstractCartService {
         User user = getCurrentUser();
         productInCartRepository.deleteByUserId(user.getId());
     }
+
 }
 

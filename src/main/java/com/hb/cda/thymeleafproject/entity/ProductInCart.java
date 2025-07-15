@@ -2,6 +2,8 @@ package com.hb.cda.thymeleafproject.entity;
 
 import jakarta.persistence.*;
 
+import java.util.Objects;
+
 @Entity
 public class ProductInCart {
 
@@ -56,5 +58,16 @@ public class ProductInCart {
 
     public void setQuantity(int quantity) {
         this.quantity = quantity;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (!(o instanceof ProductInCart that)) return false;
+        return Objects.equals(id, that.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(id);
     }
 }

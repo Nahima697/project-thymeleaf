@@ -104,6 +104,7 @@
 
         button[type="submit"] {
             margin-top: 10px;
+            margin-right: 20px;
             padding: 8px 15px;
             background-color: #28a745;
             border: none;
@@ -115,6 +116,21 @@
         }
 
         button[type="submit"]:hover {
+            background-color: #1e7e34;
+        }
+
+       .login {
+            padding: 8px 15px;
+            background-color: #28a745;
+            border: none;
+            color: white;
+            font-weight: 600;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .login {
             background-color: #1e7e34;
         }
 
@@ -142,7 +158,8 @@
         .header {
             display:flex;
             justify-content:space-between;
-            gap: 20px;
+            width: 80%;
+
         }
     </style>
 </head>
@@ -156,7 +173,7 @@
             <button class="logout">Logout</button>
         </form>
         <form  th:if = "${user==null}" th:action="@{/login}" method="post">
-            <button >Login</button>
+            <button class="login">Login</button>
         </form>
     </div>
     <ul th:if="${errors}">
