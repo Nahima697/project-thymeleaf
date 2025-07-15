@@ -69,8 +69,8 @@ class DatabaseCartServiceTest {
         dto2 = new ProductInCartDTO("Product2", 20.0, "desc2", 2);
 
         //Simuler les AddProductDto
-        addDto1 = new AddProductDTO("test1",10.00,"prod",50,1);
-        addDto2 = new AddProductDTO( "test2", 15.0, "desc2", 1,1);
+        addDto1 = new AddProductDTO("test1",10);
+        addDto2 = new AddProductDTO( "test2", 11);
 
         addDto1.setId(product1.getId());
         addDto2.setId(product2.getId());
