@@ -2,7 +2,6 @@ package com.hb.cda.thymeleafproject.service;
 
 import com.hb.cda.thymeleafproject.dto.AddProductDTO;
 import com.hb.cda.thymeleafproject.dto.ProductInCartDTO;
-import com.hb.cda.thymeleafproject.entity.User;
 
 import java.util.List;
 
@@ -14,5 +13,4 @@ public interface CartServiceInterface {
     double getTotal();
     List<ProductInCartDTO> getCart();
     void clearCart();
-
 }
